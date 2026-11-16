@@ -27,5 +27,37 @@ python -m pytest tests -q
 - **validation** : choix des hyperparamètres, early stopping.
 - **test** : évaluation finale, utilisé une seule fois, pour une mesure honnête.
 
-## Résultats
-Aucun chiffre ici tant que le dataset n'a pas été analysé : ils seront reportés après exécution réelle.
+## Téléchargement automatique
+```bash
+python -m ml.dataset.download_dataset
+```
+Source : Kaggle `abdallahalidev/plantvillage-dataset` (variante `color`, 256x256 RGB, non augmentée).
+
+## Résultats réels (mesurés par `analyze_dataset.py`)
+| Mesure | Valeur |
+|---|---:|
+| Images valides | 54 305 |
+| Images corrompues | 0 |
+| Classes | 38 |
+| Plantes | 14 |
+| Résolution | 256x256 (toutes les images échantillonnées) |
+| Mode couleur | RGB |
+| Doublons exacts | 21 |
+| Plus petite classe | Potato___healthy (152) |
+| Plus grande classe | Orange___Haunglongbing_(Citrus_greening) (5 507) |
+| Ratio de déséquilibre | 36,2 |
+
+Graphiques : `docs/figures/class_distribution.png`, `docs/figures/plant_distribution.png`.
+
+### Split (graine 42, doublons regroupés)
+| Split | Images |
+|---|---:|
+| train | 38 014 |
+| validation | 8 147 |
+| test | 8 144 |
+
+Fuites détectées entre splits : **0** (vérification par hash).
+
+### Conséquences pour la suite
+- Fort déséquilibre : utiliser `class_weight` et ne pas se fier à l'accuracy seule (F1 macro, matrice de confusion).
+- Fond uniforme PlantVillage : l'accuracy sur le test sera probablement plus élevée qu'en conditions réelles.
