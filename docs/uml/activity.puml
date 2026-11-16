@@ -1,0 +1,19 @@
+@startuml activity
+start
+:Sélectionner une image;
+:Prévisualiser;
+:Cliquer sur Analyser;
+if (Extension, MIME, taille OK ?) then (oui)
+  if (Image lisible par Pillow ?) then (oui)
+    :Prétraitement (resize, normalisation);
+    :Prédiction CNN;
+    :Enregistrer l'analyse;
+    :Afficher le résultat;
+  else (non)
+    :Erreur : image invalide;
+  endif
+else (non)
+  :Erreur : fichier refusé;
+endif
+stop
+@enduml

@@ -1,0 +1,55 @@
+@startuml class
+class Analysis {
+  +id: int
+  +image_path: str
+  +plant: str
+  +disease: str
+  +confidence: float
+  +created_at: datetime
+  +disease_id: int
+}
+class Disease {
+  +id: int
+  +name: str
+  +plant: str
+  +description: str
+  +symptoms: str
+  +recommendations: str
+}
+class PredictionService {
+  +predict(image_path): PredictionResult
+}
+class PredictionResult {
+  +plant: str
+  +disease: str
+  +confidence: float
+}
+class ModelLoader {
+  -model
+  -class_names: list
+  +load()
+  +predict(array): ndarray
+}
+class AnalysisRepository {
+  +create(data)
+  +get(id)
+  +list()
+  +delete(id)
+}
+class DiseaseRepository {
+  +list()
+  +get_by_label(plant, disease)
+}
+class StatsService {
+  +compute(): dict
+}
+class ImageValidator {
+  +validate(file): None
+}
+Disease "1" <-- "0..*" Analysis : concerne
+PredictionService --> ModelLoader
+PredictionService ..> PredictionResult
+AnalysisRepository ..> Analysis
+DiseaseRepository ..> Disease
+StatsService --> AnalysisRepository
+@enduml

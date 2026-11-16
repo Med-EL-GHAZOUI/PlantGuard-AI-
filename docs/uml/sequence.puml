@@ -1,0 +1,24 @@
+@startuml sequence
+actor Utilisateur
+participant "Frontend" as F
+participant "API FastAPI" as A
+participant "ImageValidator" as V
+participant "PredictionService" as P
+participant "Modèle TF" as M
+database "SQLite" as DB
+Utilisateur -> F : choisit une image
+F -> A : POST /api/predict (multipart)
+A -> V : validate(file)
+alt fichier invalide
+  V --> A : erreur
+  A --> F : 400 / 413 / 415
+else fichier valide
+  A -> P : predict(image)
+  P -> M : preprocessing + inférence
+  M --> P : probabilités
+  P --> A : {plant, disease, confidence}
+  A -> DB : INSERT Analysis
+  A --> F : 200 JSON
+  F --> Utilisateur : affiche le résultat
+end
+@enduml

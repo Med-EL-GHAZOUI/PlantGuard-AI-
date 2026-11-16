@@ -1,0 +1,26 @@
+@startuml component
+package "Frontend" {
+  [Pages HTML/CSS]
+  [JS (Fetch API)]
+}
+package "Backend FastAPI" {
+  [Routers API]
+  [Schemas Pydantic]
+  [Services]
+  [Database layer]
+}
+package "ML" {
+  [Inference (predict.py)]
+  [Modèle .keras + config JSON]
+}
+database "SQLite" as DB
+folder "uploads/" as UP
+[JS (Fetch API)] --> [Routers API] : HTTP/JSON
+[Routers API] --> [Schemas Pydantic]
+[Routers API] --> [Services]
+[Services] --> [Inference (predict.py)]
+[Inference (predict.py)] --> [Modèle .keras + config JSON]
+[Services] --> [Database layer]
+[Database layer] --> DB
+[Services] --> UP
+@enduml

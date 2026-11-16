@@ -1,0 +1,16 @@
+@startuml deployment
+node "Navigateur client" {
+  artifact "Frontend statique"
+}
+node "Docker Host" {
+  node "Conteneur frontend (Nginx)" as FE
+  node "Conteneur backend (Uvicorn + FastAPI + TensorFlow)" as BE {
+    artifact "plantguard_model.keras"
+  }
+  database "Volume SQLite / uploads" as VOL
+}
+"Frontend statique" ..> FE : HTTP
+FE --> BE : HTTP /api
+BE --> VOL
+note bottom of VOL : Migration possible vers\nun conteneur PostgreSQL
+@enduml
