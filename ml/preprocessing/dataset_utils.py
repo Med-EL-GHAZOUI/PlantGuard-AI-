@@ -15,7 +15,13 @@ IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 
 def list_class_dirs(root: Path) -> list[Path]:
     """Retourne les sous-dossiers de `root` (un dossier = une classe), triés par nom."""
-    return sorted(p for p in Path(root).iterdir() if p.is_dir())
+    root = Path(root)
+    if not root.is_dir():
+        raise SystemExit(
+            f"Dossier introuvable : {root}\n"
+            "Télécharge d'abord le dataset : python -m ml.dataset.download_dataset"
+        )
+    return sorted(p for p in root.iterdir() if p.is_dir())
 
 
 def list_images(class_dir: Path) -> list[Path]:

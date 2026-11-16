@@ -10,7 +10,9 @@ __pycache__/
 .env
 
 # Données et artefacts lourds (non versionnés)
-ml/dataset/
+ml/dataset/raw/
+ml/dataset/split/
+ml/dataset/_download/
 backend/uploads/*
 !backend/uploads/.gitkeep
 *.h5
@@ -20,3 +22,4 @@ backend/uploads/*
 Thumbs.db
 .vscode/
 .idea/
+ml/dataset/download.log
