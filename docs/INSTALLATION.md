@@ -32,6 +32,8 @@ python -m ml.preprocessing.class_info --train-dir ml/dataset/split/train --outpu
 python -m ml.training.train_baseline --epochs 10                       # ou train_transfer / train_finetune
 python -m ml.export.export_model --model ml/artifacts/baseline/best.keras --name baseline
 ```
+Pour enchaîner **une étape à la fois** (baseline → MobileNetV2 → fine-tuning → comparaison sur le test), reprenable et sans calcul en parallèle : `python -m scripts.run_pipeline` ; sa progression est dans `ml/artifacts/pipeline_status.json`. Il s'arrête avant l'export : le choix du modèle final reste humain.
+
 `export_model` écrit `ml/artifacts/final/` (modèle, `class_names.json`, `model_config.json`). Pour reprendre un entraînement
 interrompu du baseline : `python -m ml.training.train_baseline --resume --epochs 10`.
 Pour comparer les modèles sur le test : voir [MODEL.md](MODEL.md).
