@@ -13,6 +13,7 @@ from PIL import Image
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 ALLOWED_MIME_TYPES = {"image/jpeg", "image/png"}
 ALLOWED_FORMATS = {"JPEG", "PNG"}
+MAX_PIXELS = 25_000_000  # ~5000x5000 : au-delà, le décodage coûterait des centaines de Mo (bombe de décompression)
 
 
 class UploadValidationError(Exception):
@@ -39,8 +40,13 @@ def validate_upload(filename: str | None, content_type: str | None, data: bytes,
     try:
         with Image.open(io.BytesIO(data)) as img:
             fmt = img.format
+            width, height = img.size  # lu dans l'en-tête : avant tout décodage coûteux
+            if width * height > MAX_PIXELS:
+                raise UploadValidationError(413, "Image trop grande (dimensions excessives).")
             img.load()
-    except Exception:
+    except UploadValidationError:
+        raise
+    except Exception:  # inclut DecompressionBombError de Pillow
         raise UploadValidationError(400, "Le fichier n'est pas une image valide.") from None
     if fmt not in ALLOWED_FORMATS:
         raise UploadValidationError(415, "Format d'image non autorisé : utilisez JPG ou PNG.")
