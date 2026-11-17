@@ -36,3 +36,5 @@ ml/artifacts/*.pid
 .coverage.*
 htmlcov/
 *.err
+ml/artifacts/pipeline_status.json
+ml/artifacts/pipeline_status.tmp
