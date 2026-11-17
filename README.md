@@ -13,7 +13,7 @@ un réseau de neurones convolutif (CNN / Transfer Learning).
 |---|---|
 | Pipeline de données (analyse, split sans fuite, prétraitement, augmentation) | ✅ fait, mesuré sur 54 305 images réelles |
 | Code des modèles (CNN baseline, VGG16, ResNet50, MobileNetV2), fine-tuning, comparaison, Grad-CAM | ✅ écrit et testé sur données synthétiques |
-| **Entraînement des modèles** | ⏳ **en cours** : baseline à 4/10 époques (62,8 % de précision en validation) ; les 3 modèles de transfert ne sont **pas encore entraînés** |
+| **Entraînement des modèles** | ⏳ **en cours, interrompu à plusieurs reprises par un manque de mémoire du poste** : baseline à 5/10 époques (75,4 % de précision en **validation**, relevé du 17/11 à 02:53) ; les 3 modèles de transfert ne sont **pas encore entraînés** |
 | **Comparaison sur le jeu de test, choix du modèle final** | ⏳ **pas encore faite** : aucune performance finale n'est annoncée ici tant qu'elle n'est pas mesurée |
 | Backend FastAPI, base SQLite, frontend, Docker, sécurité | ✅ fait et vérifié (avec un modèle **non entraîné**) |
 | Rapport académique, présentation | ⏳ à faire |
@@ -122,6 +122,7 @@ des charges) : toute personne joignant l'API peut lire et supprimer l'historique
 | 18 Performance | [18-performance.md](docs/18-performance.md) |
 | 19 Docker | [19-docker.md](docs/19-docker.md) |
 | 20 Git et dépôt | [20-git.md](docs/20-git.md) |
+| 21 Documentation finale | [ARCHITECTURE.md](docs/ARCHITECTURE.md) · [API.md](docs/API.md) · [MODEL.md](docs/MODEL.md) · [INSTALLATION.md](docs/INSTALLATION.md) |
 
 ## Limites connues
 Fond uniforme du dataset (généralisation non mesurée hors dataset) · base de connaissances limitée à 6 classes sur 38 ·
