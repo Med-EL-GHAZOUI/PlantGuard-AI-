@@ -7,7 +7,7 @@ python -m ml.evaluation.benchmark --runs 20      # -> docs/results/benchmark.md 
 
 ## Conditions de mesure (à lire avant les chiffres)
 - CPU 20 threads, Windows, TensorFlow 2.21, **sans GPU**.
-- **Mesuré pendant qu'un entraînement tournait sur la même machine** : les chiffres sont donc *pessimistes* et bruités (par exemple ResNet50 « modèle seul » 353 ms > `predict()` complet 259 ms : même ordre de grandeur, écart dû au bruit, pas à la physique).
+- **Machine non dédiée et charge non contrôlée** : d'autres applications tournaient sur ce poste (conteneurs Docker d'autres projets, autres serveurs locaux). *Correction :* une première version de ce document affirmait qu'un entraînement de ce projet tournait pendant les mesures ; c'était une hypothèse non vérifiée, et cet entraînement était en réalité déjà arrêté. La charge réelle pendant les mesures est donc inconnue : les chiffres sont bruités (par exemple ResNet50 « modèle seul » 353 ms > `predict()` complet 259 ms : même ordre de grandeur, écart dû au bruit, pas à la physique).
 - Poids aléatoires (`weights=None`) : la latence dépend de l'architecture, pas des poids. Les photos de test sont synthétiques (JPEG 256 px et 3000×2250 px).
 - 20 mesures par cas après échauffement ; on donne la médiane et le p95.
 
@@ -19,7 +19,7 @@ python -m ml.evaluation.benchmark --runs 20      # -> docs/results/benchmark.md 
 | ResNet50 | 23,7 M | 353 ms | 259 ms | 365 ms (462) |
 | VGG16 | 14,7 M | 114 ms | 132 ms | 212 ms (241) |
 
-→ **Les 4 architectures respectent la cible de 2 s avec une marge d'un facteur 5 à 20**, même sous charge.
+→ **Les 4 architectures respectent la cible de 2 s avec une marge d'un facteur 5 à 20**, sur une machine non dédiée.
 Le choix du modèle final se fera donc sur la qualité (Phase 8), pas sur la vitesse. Observation
 inattendue : MobileNetV2, réputé « léger », est plus lent que VGG16 ici (convolutions séparables peu
 efficaces sur ce CPU/oneDNN) : ne pas supposer, mesurer.
@@ -38,7 +38,7 @@ Validation 3 ms · second décodage + redimensionnement 10 ms · enregistrement 
 Le débit sature autour de 4 req/s : l'inférence est sérialisée par un verrou (le modèle n'est pas
 thread-safe), les requêtes **font la queue**. À 8 clients simultanés, le p95 dépasse 2 s.
 La latence d'1 client (625 ms) est supérieure à `predict()` (~250 ms) : l'écart est dû au client HTTP de
-test et à la charge machine, pas au code applicatif (profilé : ~35 ms).
+test et à la charge de la machine, pas au code applicatif (profilé : ~35 ms).
 
 ## Optimisations étudiées
 | Idée | Résultat | Décision |
@@ -61,5 +61,5 @@ prédictions du modèle entraîné avec les deux chaînes sur le jeu de test.
 - File de requêtes avec réponse asynchrone si l'on veut absorber des pics sans dépasser 2 s.
 
 ## Limites
-Aucune mesure sur GPU ni sur le serveur de production visé ; mesures faites sur une machine partagée
-avec un entraînement ; photos synthétiques. À refaire sur la machine cible, une fois libre.
+Aucune mesure sur GPU ni sur le serveur de production visé ; mesures faites sur une machine non dédiée
+(charge inconnue) ; photos synthétiques. À refaire sur la machine cible, une fois libre.
