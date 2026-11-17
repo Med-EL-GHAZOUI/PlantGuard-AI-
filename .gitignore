@@ -32,3 +32,7 @@ ml/artifacts/*.log
 ml/artifacts/*_finetuned/
 *.db
 ml/artifacts/*.pid
+.coverage
+.coverage.*
+htmlcov/
+*.err

@@ -1,0 +1,9 @@
+# Fins de ligne : LF dans le dépôt, quel que soit le système (évite les avertissements et les diffs parasites)
+* text=auto eol=lf
+
+# Fichiers binaires : ne jamais convertir
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.keras binary
+*.h5 binary

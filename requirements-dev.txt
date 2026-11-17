@@ -4,3 +4,4 @@
 httpx==0.28.1
 pytest-cov
 pip-audit
+pyyaml==6.0.3
