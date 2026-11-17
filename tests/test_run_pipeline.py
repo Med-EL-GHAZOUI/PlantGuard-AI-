@@ -4,7 +4,15 @@ import os
 import sys
 from pathlib import Path
 
+import pytest
+
 from scripts.run_pipeline import Stage, log, default_stages, pid_alive, run_stage, wait_for_baseline, write_status
+
+
+@pytest.fixture(autouse=True)
+def isolated_log(tmp_path, monkeypatch):
+    """Les tests ne doivent jamais écrire dans le vrai journal du pipeline (ml/artifacts/pipeline.log)."""
+    monkeypatch.setattr("scripts.run_pipeline.LOG_FILE", tmp_path / "test-pipeline.log")
 
 
 def _py(code):
