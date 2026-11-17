@@ -27,7 +27,8 @@ class FakeService:
 
 
 def _settings(tmp_path, **kw):
-    return Settings(model_dir=tmp_path / "absent", **kw)
+    return Settings(model_dir=tmp_path / "absent", database_url="sqlite:///:memory:",
+                    upload_dir=tmp_path / "uploads", **kw)
 
 
 @pytest.fixture

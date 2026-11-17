@@ -23,8 +23,11 @@ class UploadValidationError(Exception):
 
 
 def validate_upload(filename: str | None, content_type: str | None, data: bytes,
-                    max_bytes: int) -> None:
-    """Lève UploadValidationError (400 / 413 / 415) si le fichier n'est pas acceptable."""
+                    max_bytes: int) -> str:
+    """Lève UploadValidationError (400 / 413 / 415) si le fichier n'est pas acceptable.
+
+    Retourne le format réel détecté ("JPEG" ou "PNG").
+    """
     if not data:
         raise UploadValidationError(400, "Le fichier est vide.")
     if len(data) > max_bytes:
@@ -41,3 +44,4 @@ def validate_upload(filename: str | None, content_type: str | None, data: bytes,
         raise UploadValidationError(400, "Le fichier n'est pas une image valide.") from None
     if fmt not in ALLOWED_FORMATS:
         raise UploadValidationError(415, "Format d'image non autorisé : utilisez JPG ou PNG.")
+    return fmt

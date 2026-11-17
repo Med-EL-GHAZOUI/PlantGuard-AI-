@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 
 from backend.app.api.routes import router
 from backend.app.config import Settings
+from backend.app.database.session import create_session_factory
 from backend.app.services.knowledge_base import load_knowledge
 from backend.app.services.prediction_service import ModelLoadError, PredictionService
 from ml.preprocessing.config import CLASS_NAMES_FILE
@@ -31,6 +32,7 @@ def create_app(settings: Settings | None = None,
 
     app.state.settings = settings
     app.state.knowledge = load_knowledge()
+    app.state.session_factory = create_session_factory(settings.database_url)
     app.state.prediction_service = service
     app.state.model_name = None
     app.state.class_names = []
