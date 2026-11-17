@@ -50,6 +50,10 @@ class PredictionService:
         self._lock = threading.Lock()  # un seul appel au modèle à la fois (FastAPI = threads)
         self._model(np.zeros((1, *model.input_shape[1:]), dtype="float32"))  # échauffement
 
+    @property
+    def class_names(self) -> list[str]:
+        return list(self._class_names)
+
     @classmethod
     def from_artifacts(cls, artifacts_dir: Path) -> "PredictionService":
         """Charge `model.keras`, `class_names.json` et `model_config.json` d'un dossier exporté."""

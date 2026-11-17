@@ -1,0 +1,26 @@
+{
+  "Tomato___Early_blight": {
+    "description": "Maladie fongique (Alternaria) : taches brunes à anneaux concentriques sur les feuilles les plus âgées, qui jaunissent puis tombent.",
+    "advice": "Retirer les feuilles atteintes, éviter de mouiller le feuillage, espacer les plants et pratiquer la rotation des cultures."
+  },
+  "Tomato___Late_blight": {
+    "description": "Maladie due à Phytophthora infestans : grandes taches vert sombre à brunes, aspect détrempé, duvet blanc en conditions humides. Se propage très vite.",
+    "advice": "Retirer et détruire les plants atteints, éviter l'humidité sur le feuillage, consulter un conseiller agricole pour un traitement adapté."
+  },
+  "Potato___Early_blight": {
+    "description": "Maladie fongique (Alternaria) : taches brunes en cibles sur les feuilles.",
+    "advice": "Rotation des cultures, retirer les débris végétaux, éviter les excès d'azote."
+  },
+  "Potato___Late_blight": {
+    "description": "Mildiou de la pomme de terre (Phytophthora infestans) : taches sombres détrempées sur les feuilles, pourriture des tubercules.",
+    "advice": "Détruire les plants atteints, utiliser des plants sains, consulter un conseiller agricole."
+  },
+  "Apple___Apple_scab": {
+    "description": "Tavelure du pommier (Venturia inaequalis) : taches olivâtres à brunes sur feuilles et fruits.",
+    "advice": "Ramasser les feuilles tombées à l'automne, aérer la ramure par la taille."
+  },
+  "Corn_(maize)___Common_rust_": {
+    "description": "Rouille commune du maïs : pustules brun-rouille sur les deux faces des feuilles.",
+    "advice": "Choisir des variétés résistantes ; surveiller l'évolution, surtout par temps frais et humide."
+  }
+}
