@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlantGuard AI</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1>🌿 PlantGuard AI</h1>
+    <nav aria-label="Navigation principale">
+      <a href="#analyze" data-view="analyze">Analyser</a>
+      <a href="#history" data-view="history">Historique</a>
+      <a href="#dashboard" data-view="dashboard">Dashboard</a>
+      <a href="#diseases" data-view="diseases">Maladies</a>
+    </nav>
+  </header>
+
+  <p class="disclaimer" role="note">
+    ⚠️ Outil expérimental d'aide à l'identification, pas un diagnostic professionnel.
+  </p>
+
+  <main>
+    <div id="api-status" class="banner banner-warn" hidden></div>
+
+    <section id="view-analyze" class="view" aria-labelledby="t-analyze">
+      <h2 id="t-analyze">Analyser une feuille</h2>
+      <div class="analyze-grid">
+        <div>
+          <label id="dropzone" class="dropzone" for="file-input" tabindex="0">
+            <input id="file-input" type="file" accept="image/jpeg,image/png" hidden>
+            <span id="dropzone-hint">Glissez une photo ici ou cliquez pour choisir<br><small>JPG, JPEG ou PNG — 5 Mo maximum</small></span>
+            <img id="preview" alt="Aperçu de l'image sélectionnée" hidden>
+          </label>
+          <p id="form-error" class="error" role="alert" hidden></p>
+          <button id="analyze-btn" class="btn" type="button" disabled>Analyser</button>
+        </div>
+        <div id="result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="view-history" class="view" aria-labelledby="t-history" hidden>
+      <h2 id="t-history">Historique des analyses</h2>
+      <div id="history-list"></div>
+      <div class="pager">
+        <button id="prev-page" class="btn btn-secondary" type="button">← Précédent</button>
+        <span id="page-info"></span>
+        <button id="next-page" class="btn btn-secondary" type="button">Suivant →</button>
+      </div>
+    </section>
+
+    <section id="view-dashboard" class="view" aria-labelledby="t-dashboard" hidden>
+      <h2 id="t-dashboard">Dashboard</h2>
+      <div id="dashboard"></div>
+    </section>
+
+    <section id="view-diseases" class="view" aria-labelledby="t-diseases" hidden>
+      <h2 id="t-diseases">Maladies prises en charge</h2>
+      <input id="disease-search" type="search" placeholder="Rechercher une plante ou une maladie…" aria-label="Rechercher">
+      <div id="disease-list" class="card-grid"></div>
+    </section>
+  </main>
+
+  <dialog id="detail-dialog">
+    <div id="detail-body"></div>
+    <button id="detail-close" class="btn btn-secondary" type="button">Fermer</button>
+  </dialog>
+
+  <script src="config.js"></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
