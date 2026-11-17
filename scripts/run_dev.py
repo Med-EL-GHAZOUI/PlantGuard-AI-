@@ -32,6 +32,12 @@ class FrontendHandler(SimpleHTTPRequestHandler):
         self.api_url = api_url
         super().__init__(*args, **kwargs)
 
+    def end_headers(self):
+        self.send_header("Content-Security-Policy", content_security_policy(self.api_url))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        super().end_headers()
+
     def do_GET(self):  # noqa: N802 (nom imposé par http.server)
         if self.path.split("?")[0] == "/config.js":
             body = f'window.PLANTGUARD_API = "{self.api_url}";\n'.encode()
@@ -45,6 +51,13 @@ class FrontendHandler(SimpleHTTPRequestHandler):
 
     def log_message(self, *args):  # sortie silencieuse
         pass
+
+
+def content_security_policy(api_url: str) -> str:
+    """CSP stricte : scripts et styles uniquement depuis le site lui-même, requêtes limitées à l'API."""
+    return ("default-src 'self'; script-src 'self'; style-src 'self'; "
+            f"img-src 'self' blob: {api_url}; connect-src {api_url}; "
+            "object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'")
 
 
 def make_frontend_server(api_url: str, port: int, directory: Path = FRONTEND_DIR,

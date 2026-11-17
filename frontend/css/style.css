@@ -18,6 +18,8 @@ h2 { margin-top: .5rem; }
 .analyze-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
 .dropzone { display: flex; align-items: center; justify-content: center; min-height: 260px; border: 2px dashed var(--border); border-radius: 12px; background: var(--card); text-align: center; color: var(--muted); cursor: pointer; overflow: hidden; padding: 1rem; }
 .dropzone:hover, .dropzone.drag, .dropzone:focus-visible { border-color: var(--green); outline: none; }
+.result-img { max-width: 100%; max-height: 200px; border-radius: 8px; }
+.span-all { grid-column: 1 / -1; }
 .dropzone img { max-width: 100%; max-height: 320px; border-radius: 8px; }
 .btn { margin-top: .8rem; padding: .6rem 1.2rem; border: 0; border-radius: 8px; background: var(--green); color: #fff; font-size: 1rem; cursor: pointer; }
 .btn:hover:not(:disabled) { background: var(--green-dark); }

@@ -21,7 +21,7 @@ export function renderResult(container, prediction, imageSrc, info) {
       bar(item.confidence),
       el("span", { text: percent(item.confidence) })));
   container.append(el("div", { class: "card result" },
-    el("img", { src: imageSrc, alt: "Image analysée", style: "max-width:100%;max-height:200px;border-radius:8px" }),
+    el("img", { class: "result-img", src: imageSrc, alt: "Image analysée" }),
     el("h3", { text: `${prediction.plant} — ${prediction.disease}` }),
     el("p", {}, statusBadge(prediction), " ", el("strong", { text: `Confiance : ${percent(prediction.confidence)}` })),
     prediction.low_confidence && el("p", { class: "muted",

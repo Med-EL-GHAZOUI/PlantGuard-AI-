@@ -54,7 +54,7 @@ export async function loadDashboard() {
           barList(s.by_disease.slice(0, 10), "class_name", "Aucune maladie détectée.")),
         el("div", { class: "card" }, el("h3", { text: "Plantes les plus analysées" }),
           barList(s.top_plants, "plant", "Aucune analyse.")),
-        el("div", { class: "card", style: "grid-column: 1 / -1" }, el("h3", { text: "Analyses par jour" }),
+        el("div", { class: "card span-all" }, el("h3", { text: "Analyses par jour" }),
           timeline(s.per_day))));
   } catch (error) {
     root.append(el("p", { class: "error", text: error.message }));

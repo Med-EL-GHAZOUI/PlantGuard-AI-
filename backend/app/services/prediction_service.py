@@ -69,7 +69,11 @@ class PredictionService:
         if _sha256(paths[MODEL_FILE]) != config["sha256"]:
             raise ModelLoadError("Empreinte du modèle différente de model_config.json : fichier modifié.")
         class_names = json.loads(paths[CLASS_NAMES_FILE].read_text(encoding="utf-8"))
-        model = keras.models.load_model(paths[MODEL_FILE])
+        try:
+            # safe_mode=True : refuse les couches Lambda / code arbitraire dans un fichier .keras
+            model = keras.models.load_model(paths[MODEL_FILE], safe_mode=True)
+        except Exception as exc:
+            raise ModelLoadError(f"Chargement du modèle impossible ou refusé : {type(exc).__name__}") from exc
         return cls(model, class_names, config["confidence_threshold"])
 
     def predict(self, image_bytes: bytes, top_k: int = 3) -> Prediction:

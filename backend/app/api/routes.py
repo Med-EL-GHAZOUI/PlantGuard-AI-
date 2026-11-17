@@ -8,6 +8,7 @@ from backend.app.schemas.prediction import (
     AnalysisOut, AnalysisPage, DiseaseInfo, ErrorResponse, HealthResponse, PredictionResponse,
     StatsOut,
 )
+from backend.app.security import rate_limit
 from backend.app.services import analysis_service
 from backend.app.services.knowledge_base import describe_classes
 from backend.app.services.prediction_service import PredictionService
@@ -44,7 +45,7 @@ def health(request: Request) -> HealthResponse:
                           model_name=request.app.state.model_name)
 
 
-@router.post("/predict", response_model=PredictionResponse,
+@router.post("/predict", response_model=PredictionResponse, dependencies=[Depends(rate_limit)],
              responses={400: {"model": ErrorResponse}, 413: {"model": ErrorResponse},
                         415: {"model": ErrorResponse}, 503: {"model": ErrorResponse}})
 def predict(request: Request, file: UploadFile = File(...),
@@ -86,7 +87,8 @@ def get_analysis_image(analysis_id: int, request: Request, db: Session = Depends
     return FileResponse(path)
 
 
-@router.delete("/analyses/{analysis_id}", status_code=204, responses={404: {"model": ErrorResponse}})
+@router.delete("/analyses/{analysis_id}", status_code=204, dependencies=[Depends(rate_limit)],
+               responses={404: {"model": ErrorResponse}})
 def delete_analysis(analysis_id: int, request: Request, db: Session = Depends(get_db)) -> Response:
     if not analysis_service.delete_analysis(db, request.app.state.settings.upload_dir, analysis_id):
         raise HTTPException(404, "Analyse introuvable.")

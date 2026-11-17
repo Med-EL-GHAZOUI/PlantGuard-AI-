@@ -14,6 +14,7 @@ from fastapi.responses import JSONResponse
 from backend.app.api.routes import router
 from backend.app.config import Settings
 from backend.app.database.session import create_session_factory
+from backend.app.security import SECURITY_HEADERS, SlidingWindowLimiter
 from backend.app.services.knowledge_base import load_knowledge
 from backend.app.services.prediction_service import ModelLoadError, PredictionService
 from ml.preprocessing.config import CLASS_NAMES_FILE
@@ -26,11 +27,23 @@ def create_app(settings: Settings | None = None,
     """`service` permet d'injecter un service déjà construit (tests) ; sinon on charge le modèle exporté."""
     settings = settings or Settings.from_env()
     app = FastAPI(title="PlantGuard AI", version="0.1.0",
-                  description="Outil expérimental d'aide à l'identification des maladies de feuilles.")
+                  description="Outil expérimental d'aide à l'identification des maladies de feuilles.",
+                  docs_url="/docs" if settings.enable_docs else None,
+                  redoc_url=None, openapi_url="/openapi.json" if settings.enable_docs else None)
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                        allow_methods=["GET", "POST", "DELETE"], allow_headers=["Content-Type"])
 
+    @app.middleware("http")
+    async def add_security_headers(request: Request, call_next):
+        response = await call_next(request)
+        for name, value in SECURITY_HEADERS.items():
+            if name == "Cache-Control" and "cache-control" in response.headers:
+                continue  # ne pas écraser le cache voulu d'un fichier servi (images)
+            response.headers[name] = value
+        return response
+
     app.state.settings = settings
+    app.state.rate_limiter = SlidingWindowLimiter(settings.rate_limit_per_minute)
     app.state.knowledge = load_knowledge()
     app.state.session_factory = create_session_factory(settings.database_url)
     app.state.prediction_service = service
