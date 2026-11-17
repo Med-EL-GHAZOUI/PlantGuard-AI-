@@ -88,3 +88,23 @@ def test_model_doc_states_when_results_are_missing():
         assert "jeu de test" in text and "ne sont **pas** des performances de test" in text
     else:
         pytest.skip("comparaison disponible : MODEL.md doit être mis à jour avec ses chiffres")
+
+
+def test_report_draft_does_not_claim_results_that_do_not_exist():
+    """Tant que la comparaison sur le test n'existe pas, le rapport doit le dire et ne citer aucun F1/accuracy de test."""
+    text = (ROOT / "docs/22-rapport.md").read_text(encoding="utf-8")
+    assert "BROUILLON" in text and "À COMPLÉTER" in text
+    if not (ROOT / "docs/results/comparison.json").exists():
+        assert re.search(r"5\.3 Comparaison.*\n\*\*\[À COMPLÉTER", text)
+        assert "F1 macro de test" not in text and "accuracy de test de" not in text.lower()
+
+
+def test_report_numbers_match_measured_sources():
+    """Les chiffres clés cités dans le rapport doivent venir des documents mesurés."""
+    report = (ROOT / "docs/22-rapport.md").read_text(encoding="utf-8")
+    dataset = (ROOT / "docs/03-dataset.md").read_text(encoding="utf-8")
+    for number in ("54 305", "38 014", "8 147", "8 144"):
+        assert number in report and number.replace(" ", " ") in dataset.replace("\u202f", " ")
+    bench = (ROOT / "docs/results/benchmark.md").read_text(encoding="utf-8")
+    for ms in ("105 ms", "250 ms", "365 ms", "212 ms"):
+        assert ms in report and ms in bench
