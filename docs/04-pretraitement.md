@@ -28,5 +28,5 @@ Produit `class_names.json` (indice → nom, lu par l'API) et `class_weights.json
 38 classes ; poids de classes de 0,26 (classe la plus grande) à 9,44 (la plus petite).
 
 ## Limites
-- Les parties TensorFlow (`augmentation.py`, `data_pipeline.py`) ne sont pas testées tant que TensorFlow n'est pas installé : leur test est ignoré (`importorskip`) et sera exécuté en Phase 5.
+- Les parties TensorFlow (TensorFlow 2.21) sont testées : l'augmentation conserve la forme et est inactive hors entraînement ; `make_datasets` renvoie des lots (32, 224, 224, 3) float32 dans [0, 255] sur les 38 classes du vrai split.
 - Fond uniforme PlantVillage : l'augmentation ne simule pas les fonds réalistes (cf. Phase 3).
