@@ -50,6 +50,32 @@ def test_train_baseline_runs(split_dir, tmp_path):
     assert summary["model"] == "baseline_cnn" and summary["epochs_run"] == 1
 
 
+def test_train_baseline_resume_continues_history_and_never_downgrades_best(split_dir, tmp_path):
+    from ml.training.train_baseline import read_history, train
+
+    out = tmp_path / "base"
+    train(split_dir, out, epochs=1, batch_size=4)
+    assert len(read_history(out)) == 1 and (out / "last.keras").exists()
+    first_best = (out / "best.keras").stat().st_mtime_ns
+
+    summary = train(split_dir, out, epochs=2, batch_size=4, resume=True)
+    rows = read_history(out)
+    assert [int(r["epoch"]) for r in rows] == [0, 1]  # la reprise ajoute l'époque 1, sans réécrire l'historique
+    assert summary["epochs_run"] == 2
+    assert (out / "best.keras").stat().st_mtime_ns >= first_best
+
+
+def test_resume_without_checkpoint_or_when_already_done_fails_clearly(split_dir, tmp_path):
+    from ml.training.train_baseline import train
+
+    with pytest.raises(SystemExit):
+        train(split_dir, tmp_path / "empty", epochs=2, batch_size=4, resume=True)
+    out = tmp_path / "done"
+    train(split_dir, out, epochs=1, batch_size=4)
+    with pytest.raises(SystemExit):
+        train(split_dir, out, epochs=1, batch_size=4, resume=True)
+
+
 def test_train_transfer_then_finetune_run(split_dir, tmp_path, offline_transfer):
     from ml.training.train_finetune import finetune
     from ml.training.train_transfer import train
