@@ -23,3 +23,6 @@ Thumbs.db
 .vscode/
 .idea/
 ml/dataset/download.log
+*.keras
+ml/artifacts/baseline/
+ml/artifacts/*.log
