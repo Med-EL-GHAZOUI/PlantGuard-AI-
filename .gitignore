@@ -25,4 +25,7 @@ Thumbs.db
 ml/dataset/download.log
 *.keras
 ml/artifacts/baseline/
+ml/artifacts/mobilenetv2/
+ml/artifacts/resnet50/
+ml/artifacts/vgg16/
 ml/artifacts/*.log
