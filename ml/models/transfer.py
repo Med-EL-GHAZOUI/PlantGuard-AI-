@@ -52,3 +52,28 @@ def build_transfer_model(name: str, num_classes: int, weights: str | None = "ima
     x = keras.layers.Dropout(0.3)(x)
     outputs = keras.layers.Dense(num_classes, activation="softmax")(x)
     return keras.Model(inputs, outputs, name=name)
+
+
+def unfreeze_top_layers(model, n_layers: int) -> int:
+    """Dégèle les `n_layers` dernières couches de la base (Phase 7), en gardant BatchNorm figée.
+
+    Retourne le nombre de couches réellement dégelées. Les couches BatchNorm restent non
+    entraînables : avec de petits lots, mettre à jour leurs paramètres déstabilise le fine-tuning.
+    """
+    from tensorflow import keras
+
+    if n_layers <= 0:
+        raise ValueError("n_layers doit être > 0.")
+    base = next(layer for layer in model.layers if isinstance(layer, keras.Model))
+    base.trainable = True
+    layers = base.layers
+    for layer in layers[:-n_layers]:
+        layer.trainable = False
+    unfrozen = 0
+    for layer in layers[-n_layers:]:
+        if isinstance(layer, keras.layers.BatchNormalization):
+            layer.trainable = False
+        else:
+            layer.trainable = True
+            unfrozen += 1
+    return unfrozen

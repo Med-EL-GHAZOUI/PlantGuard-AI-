@@ -29,3 +29,4 @@ ml/artifacts/mobilenetv2/
 ml/artifacts/resnet50/
 ml/artifacts/vgg16/
 ml/artifacts/*.log
+ml/artifacts/*_finetuned/
