@@ -1,0 +1,6 @@
+# Développement local : exécution + entraînement + tests (pip install -r requirements-dev.txt)
+-r backend/requirements.txt
+-r ml/requirements-data.txt
+httpx==0.28.1
+pytest-cov
+pip-audit

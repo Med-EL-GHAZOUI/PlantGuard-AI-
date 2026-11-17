@@ -1,5 +1,6 @@
 // Client de l'API. Adresse modifiable : <script>window.PLANTGUARD_API = "https://..."</script> avant main.js.
-export const API_BASE = (window.PLANTGUARD_API || "http://127.0.0.1:8000").replace(/\/$/, "");
+// "" (chaîne vide) = même origine que la page (Docker/nginx) ; undefined = valeur par défaut de développement.
+export const API_BASE = (window.PLANTGUARD_API ?? "http://127.0.0.1:8000").replace(/\/$/, "");
 
 async function request(path, options) {
   let response;

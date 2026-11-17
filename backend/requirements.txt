@@ -1,6 +1,10 @@
+# Dépendances d'exécution du backend (utilisées par l'image Docker). Versions figées = reproductibilité.
 fastapi==0.163.1
 uvicorn==0.54.0
 python-multipart==0.0.34
 pydantic==2.14.3
-httpx==0.28.1
 sqlalchemy==2.1.9
+tensorflow==2.21.0
+keras==3.15.1
+numpy==2.4.6
+pillow==13.0.0
