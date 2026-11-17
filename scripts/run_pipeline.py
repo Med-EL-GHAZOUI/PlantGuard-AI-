@@ -30,6 +30,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 STATUS_FILE = ROOT / "ml/artifacts/pipeline_status.json"
+LOG_FILE = ROOT / "ml/artifacts/pipeline.log"
+
+
+def log(message: str, path: Path | None = None) -> None:
+    """Ajoute une ligne horodatée au journal (ouvert/fermé à chaque appel : rien n'est perdu si le processus est tué)."""
+    path = path or LOG_FILE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now().isoformat(timespec='seconds')} pid={os.getpid()} {message}\n")
 
 
 @dataclass
@@ -76,7 +85,9 @@ def run_stage(stage: Stage, status: dict, status_path: Path = STATUS_FILE, cwd: 
                                         "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
         write_status(status, status_path)
         env = {**os.environ, "PYTHONUNBUFFERED": "1", "TF_CPP_MIN_LOG_LEVEL": "2", **stage.env}
+        log(f"étape {stage.name} : tentative {attempt}")
         result = subprocess.run(stage.command, cwd=cwd, env=env)
+        log(f"étape {stage.name} : code de retour {result.returncode}, résultat présent : {stage.done_file.exists()}")
         if result.returncode == 0 and stage.done_file.exists():
             status["stages"][stage.name] = {"state": "terminé", "attempt": attempt}
             write_status(status, status_path)
@@ -96,6 +107,7 @@ def wait_for_baseline(stage: Stage, pid_file: Path, status: dict, status_path: P
         if pid_alive(pid):
             status["stages"][stage.name] = {"state": "en attente (entraînement en cours)", "pid": pid}
             write_status(status, status_path)
+            log(f"attente du baseline (pid {pid} vivant)")
             sleep(poll_seconds)
             continue
         if relaunches > stage.retries:
@@ -103,6 +115,7 @@ def wait_for_baseline(stage: Stage, pid_file: Path, status: dict, status_path: P
             write_status(status, status_path)
             return False
         relaunches += 1
+        log(f"baseline mort sans summary.json : reprise n°{relaunches}")
         status["stages"][stage.name] = {"state": "reprise du baseline", "relaunch": relaunches}
         write_status(status, status_path)
         subprocess.run(stage.command, cwd=cwd, env={**os.environ, "PYTHONUNBUFFERED": "1", "TF_CPP_MIN_LOG_LEVEL": "2"})
@@ -133,6 +146,19 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--baseline-pid-file", type=Path, default=ROOT / "ml/artifacts/baseline_train.pid")
     args = parser.parse_args()
+
+    import atexit
+    import signal
+
+    def on_signal(signum, _frame):
+        log(f"signal reçu : {signum} : arrêt")
+        raise SystemExit(128 + signum)
+
+    for name in ("SIGINT", "SIGTERM", "SIGBREAK", "SIGHUP"):  # selon le système
+        if hasattr(signal, name):
+            signal.signal(getattr(signal, name), on_signal)
+    atexit.register(lambda: log("sortie du processus"))
+    log("démarrage du pipeline")
 
     status: dict = {"stages": {}, "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
     stages = default_stages()

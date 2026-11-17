@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-from scripts.run_pipeline import Stage, default_stages, pid_alive, run_stage, wait_for_baseline, write_status
+from scripts.run_pipeline import Stage, log, default_stages, pid_alive, run_stage, wait_for_baseline, write_status
 
 
 def _py(code):
@@ -118,3 +118,12 @@ def test_default_pipeline_matches_real_scripts_and_options():
     compare = " ".join(stages[3].command).replace("\\", "/")
     assert "baseline/best.keras" in compare and "mobilenetv2_finetuned/best.keras" in compare
     assert stages[1].done_file.parent.name == "mobilenetv2" and stages[2].done_file.parent.name == "mobilenetv2_finetuned"
+
+
+def test_log_appends_timestamped_lines(tmp_path):
+    f = tmp_path / "p.log"
+    log("premier", f)
+    log("second", f)
+    lines = f.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 2 and lines[0].endswith("premier") and f"pid={os.getpid()}" in lines[1]
+    assert lines[0][:4].isdigit() and "T" in lines[0][:20]  # horodatage ISO
